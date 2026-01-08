@@ -45,7 +45,7 @@ This is what I intend to implement, not necessarily final. Things may have escap
   - notifySubscribers()
 
 - IWeatherListener: // An Observer for IWeatherReport Classes
-  - update()
+  - update(WeatherMeasurement)
 
 - IWeatherSource: // Interface to read different weather inputs and return a common weather object
   - read() -> WeatherMeasurement
@@ -57,6 +57,3 @@ This is what I intend to implement, not necessarily final. Things may have escap
 
 
 
-
-
-###

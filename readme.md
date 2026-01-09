@@ -5,7 +5,7 @@ This is what I intend to implement, not necessarily final. Things may have escap
 
 ### DataModels
 
-- record struct Weather // weather Data model
+- record struct WeatherMeasurements // weather Data model
   - Location: Location
   - Temperature: Temperature
   - Humidity: Humidity
@@ -45,11 +45,11 @@ This is what I intend to implement, not necessarily final. Things may have escap
   - notifySubscribers()
 
 - IWeatherListener: // An Observer for IWeatherReport Classes
-  - update()
+  - update(WeatherMeasurement)
 
 - IWeatherSource: // Interface to read different weather inputs and return a common weather object
-  - read() -> Weather
-  - read(string str) -> Weather
+  - read() -> WeatherMeasurement
+  - read(string str) -> WeatherMeasurement
 
 
 - IWeatherBotOutput: // Interface between bots and output (Say print to console or to file for example)
@@ -57,6 +57,3 @@ This is what I intend to implement, not necessarily final. Things may have escap
 
 
 
-
-
-###

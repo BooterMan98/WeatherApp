@@ -6,5 +6,9 @@ namespace WeatherApp.Interfaces;
 interface IWeatherSource
 {
   WeatherMeasurement Read();
-  WeatherMeasurement Read(string url);
+}
+
+interface IWeatherSourceAsync {
+  Task<WeatherMeasurement> ReadAsync();
+
 }

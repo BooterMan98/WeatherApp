@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text.Json;
 using WeatherApp.Interfaces;
 using WeatherApp.Sources;
+using WeatherApp.Weather.Bots;
 using WeatherApp.Weather.Models;
 
 namespace WeatherApp.Weather;
@@ -20,10 +21,9 @@ class WeatherManagerProvider : IWeatherManagerProvider
         continue;
       }
       var botClass = Assembly.GetExecutingAssembly().GetType($"WeatherApp.Weather.Bots.{botConfiguration.Name}");
-      if (botClass?.IsAssignableTo(typeof(IBot)) ?? false)
+      if (botClass?.BaseType == typeof(Bot))
       {
-        var types = new Type[1];
-        types[0] = typeof(BotConfiguration);
+        Type[] types = [typeof(BotConfiguration)];
         var botConstructor = botClass.GetConstructor(types);
         IBot? newBot = botConstructor?.Invoke([botConfiguration]) as IBot;
         if (newBot is not null)

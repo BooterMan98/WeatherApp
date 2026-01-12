@@ -1,5 +1,7 @@
+using System.Diagnostics.Metrics;
 using System.Net.Http.Json;
 using System.Text.Json;
+using WeatherApp.Helpers;
 using WeatherApp.Interfaces;
 using WeatherApp.Sources.Mappers;
 using WeatherApp.Weather.Models;
@@ -13,15 +15,23 @@ namespace WeatherApp.Sources;
 class JSONWeatherSource : IWeatherSource
 {
 
-  public required string JSONContent { get; init;}
-
-
-  public WeatherMeasurement Read()
+  public bool IsReadable(string data)
   {
-    var NotValidatedMeasurement = JsonSerializer.Deserialize<WeatherMeasurementsModel>(JSONContent);
-    var measurement = WeatherMeasurementMapper.ToDomain(NotValidatedMeasurement);
+    return data.StartsWith("{");
+  }
+
+  public Result<WeatherMeasurement> Read(string data)
+  {
+    try
+    {
+      var NotValidatedMeasurement = JsonSerializer.Deserialize<WeatherMeasurementsModel>(data);
+      var measurement = WeatherMeasurementMapper.ToDomain(NotValidatedMeasurement);
+      return Result.Ok(measurement);
+    } catch (Exception e)
+    {
+      return Result.Fail<WeatherMeasurement>(e.Message);
+    }
   
-    return measurement;
   }
 
 }

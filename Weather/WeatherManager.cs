@@ -3,21 +3,36 @@ using WeatherApp.Weather.Models;
 
 namespace WeatherApp.Weather;
 
-class WeatherManager : IWeatherReport
-{
+class WeatherManager(IWeatherSource[] inputSources) : IWeatherReport {
+
   private List<IWeatherListener> Subscribers { get; init; } = [];
 
-  private Queue<WeatherMeasurement> pendingMeasurements = [];
+  private readonly Queue<WeatherMeasurement> pendingMeasurements = [];
+
+  private IWeatherSource[] InputSources { get; init; } = inputSources;
 
 
 
+  public void ReceiveRawMeasurement(string data)
+  {
+    var possibleDataFormats = InputSources.Where( inputSource => inputSource.IsReadable(data));
+    foreach (var possibleDataFormat in possibleDataFormats)
+    {
+      var result = possibleDataFormat.Read(data);
+      if (result.IsSuccess)
+      {
+        ReceiveMeasurement(result.Value);
+        break;
+      }
+    }
+  }
   public void ReceiveMeasurement(WeatherMeasurement measurement) {
     pendingMeasurements.Enqueue(measurement);
   }
 
   public void NotifySubscribers()
   {
-    while (pendingMeasurements.Any())
+    while (pendingMeasurements.Count != 0)
     {
       var currentMeasurement = pendingMeasurements.Dequeue();
       foreach (var weatherSubscriber in Subscribers)

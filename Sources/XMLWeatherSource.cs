@@ -1,5 +1,6 @@
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using WeatherApp.Helpers;
 using WeatherApp.Interfaces;
 using WeatherApp.Sources.Mappers;
 using WeatherApp.Weather.Models;
@@ -8,22 +9,30 @@ namespace WeatherApp.Sources;
 
 class XMLWeatherSource : IWeatherSource
 {
+  public bool IsReadable(string data)
+  {
+     return data.StartsWith("<");
+  }
 
-  public required string XMLContent { get; init; }
-
-  public WeatherMeasurement Read()
+  public Result<WeatherMeasurement> Read(string data)
   {
 
     WeatherMeasurement measurement;
-    using (TextReader reader = new StringReader(XMLContent))
+    try
     {
-    var serializer = new XmlSerializer(typeof(WeatherMeasurementsModel));
+      using (TextReader reader = new StringReader(data))
+      {
+      var serializer = new XmlSerializer(typeof(WeatherMeasurementsModel));
 
-    var deserializedMeasurement = serializer.Deserialize(reader) ?? throw new NullReferenceException();
-    var NotValidatedMeasurement = (WeatherMeasurementsModel)deserializedMeasurement;
+      var deserializedMeasurement = serializer.Deserialize(reader) ?? throw new NullReferenceException();
+      var NotValidatedMeasurement = (WeatherMeasurementsModel)deserializedMeasurement;
 
-    measurement = WeatherMeasurementMapper.ToDomain(NotValidatedMeasurement);
+      measurement = WeatherMeasurementMapper.ToDomain(NotValidatedMeasurement);
+      }
+    } catch ( Exception e)
+    {
+      return Result.Fail<WeatherMeasurement>(e.Message);
     }
-    return measurement;
+    return Result.Ok(measurement);
   }
 }

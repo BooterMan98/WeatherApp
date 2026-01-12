@@ -5,7 +5,7 @@ namespace WeatherApp.Interfaces;
 
 interface IWeatherManagerProvider
 {
-  WeatherManager CreateWeatherManager();
+  WeatherManager CreateWeatherManager(IWeatherSource[] possibleWeatherSources);
 
   Task<List<IBot>> CreateBotsAsync(string configLocation);
 

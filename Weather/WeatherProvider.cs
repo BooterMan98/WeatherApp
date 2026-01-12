@@ -48,9 +48,9 @@ class WeatherManagerProvider : IWeatherManagerProvider
     return botConfigurations;
   }
 
-  public WeatherManager CreateWeatherManager()
+  public WeatherManager CreateWeatherManager(IWeatherSource[] possibleInputSources)
   {
-    return new WeatherManager();
+    return new WeatherManager(possibleInputSources);
   }
 
 

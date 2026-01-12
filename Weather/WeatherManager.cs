@@ -3,14 +3,13 @@ using WeatherApp.Weather.Models;
 
 namespace WeatherApp.Weather;
 
-class WeatherManager : IWeatherReport
-{
+class WeatherManager(IWeatherSource[] inputSources) : IWeatherReport {
+
   private List<IWeatherListener> Subscribers { get; init; } = [];
 
   private Queue<WeatherMeasurement> pendingMeasurements = [];
 
-
-
+  private IWeatherSource[] InputSources { get; init; } = inputSources;
   public void ReceiveMeasurement(WeatherMeasurement measurement) {
     pendingMeasurements.Enqueue(measurement);
   }

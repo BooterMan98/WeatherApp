@@ -9,5 +9,7 @@ interface IWeatherManagerProvider
 
   Task<List<IBot>> CreateBotsAsync(string configLocation);
 
+  IWeatherSource[] GetWeatherSources();
+
 
 }

@@ -15,6 +15,10 @@ class WeatherManagerProvider : IWeatherManagerProvider
     List<IBot> botList = [];
     foreach (var botConfiguration in botConfigurations)
     {
+      if (!botConfiguration.Enabled)
+      {
+        continue;
+      }
       var botClass = Assembly.GetExecutingAssembly().GetType($"WeatherApp.Weather.Bots.{botConfiguration.Name}");
       if (botClass?.IsAssignableTo(typeof(IBot)) ?? false)
       {
@@ -53,5 +57,21 @@ class WeatherManagerProvider : IWeatherManagerProvider
     return new WeatherManager(possibleInputSources);
   }
 
+  public IWeatherSource[] GetWeatherSources()
+  {
+    var sourceTypes = Assembly.GetExecutingAssembly().GetTypes().Where(type => type.IsAssignableTo(typeof(IWeatherSource)));
+    var sourceList = new List<IWeatherSource>();
+        foreach (var type in sourceTypes)
+    {
+      var constructor = type.GetConstructor([]);
+      if (constructor is null)
+      {
+         continue;
+      }
+      var source = (IWeatherSource)constructor.Invoke([]);
+      sourceList.Add(source);
+    }
+    return [.. sourceList];
+  } 
 
 }

@@ -9,6 +9,7 @@ namespace WeatherApp.Weather.Models;
 /// <remarks>
 /// To be used when reading from a source with XML or JSON content.
 /// </remarks>
+[XmlRoot("WeatherData")]
 public readonly record struct WeatherMeasurementsModel
 {
   required public string Location { get; init; }

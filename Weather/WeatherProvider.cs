@@ -11,6 +11,7 @@ namespace WeatherApp.Weather;
 class WeatherManagerProvider : IWeatherManagerProvider
 {
   private readonly BotLoader BotLoader = new JSONBotLoader();
+  private readonly WeatherReaderFactory WeatherSourceFactory = new WeatherReflectionReaderFactory();
 
   public async Task<List<IBot>> CreateBotsAsync(string configLocation)
   {
@@ -24,20 +25,7 @@ class WeatherManagerProvider : IWeatherManagerProvider
 
   public IWeatherSource[] GetWeatherSources()
   {
-    var sourceTypes = Assembly.GetExecutingAssembly().GetTypes()
-      .Where(type => type.IsAssignableTo(typeof(IWeatherSource)));
-    var sourceList = new List<IWeatherSource>();
-    foreach (var type in sourceTypes)
-    {
-      var constructor = type.GetConstructor([]);
-      if (constructor is null)
-      {
-        continue;
-      }
-      var source = (IWeatherSource)constructor.Invoke([]);
-      sourceList.Add(source);
-    }
-    return [.. sourceList];
+    return [.. WeatherSourceFactory.CreateWeatherSources()];
   }
 
 }

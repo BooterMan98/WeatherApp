@@ -17,22 +17,6 @@ class WeatherManagerProvider : IWeatherManagerProvider
     return BotLoader.LoadBots();
   }
 
-  private static async Task<IEnumerable<BotConfiguration>> GetConfigurationsFromFile(string configLocation)
-  {
-    var jsonContentStream = File.Open(configLocation, FileMode.Open);
-
-    var serializerOptions = new JsonSerializerOptions
-    {
-      PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-    };
-    // TO DO: manage exceptions when file is not valid
-    var botConfigurationsModel = await JsonSerializer.DeserializeAsync<Dictionary<string, BotConfigurationModel>>(jsonContentStream, serializerOptions) ?? [];
-
-
-    var botConfigurations = botConfigurationsModel.Select((modelKeyPair) => BotConfigurationMapper.ToDomain(modelKeyPair.Value, modelKeyPair.Key));
-    return botConfigurations;
-  }
-
   public WeatherManager CreateWeatherManager(IWeatherSource[] possibleInputSources)
   {
     return new WeatherManager(possibleInputSources);

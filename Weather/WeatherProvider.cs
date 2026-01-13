@@ -3,37 +3,18 @@ using System.Text.Json;
 using WeatherApp.Interfaces;
 using WeatherApp.Sources;
 using WeatherApp.Weather.Bots;
+using WeatherApp.Weather.Factories;
 using WeatherApp.Weather.Models;
 
 namespace WeatherApp.Weather;
 
 class WeatherManagerProvider : IWeatherManagerProvider
 {
+  private readonly BotLoader BotLoader = new JSONBotLoader();
+
   public async Task<List<IBot>> CreateBotsAsync(string configLocation)
   {
-    IEnumerable<BotConfiguration> botConfigurations = await GetConfigurationsFromFile(configLocation);
-
-    List<IBot> botList = [];
-    foreach (var botConfiguration in botConfigurations)
-    {
-      if (!botConfiguration.Enabled)
-      {
-        continue;
-      }
-      var botClass = Assembly.GetExecutingAssembly().GetType($"WeatherApp.Weather.Bots.{botConfiguration.Name}");
-      if (botClass?.BaseType == typeof(Bot))
-      {
-        Type[] types = [typeof(BotConfiguration)];
-        var botConstructor = botClass.GetConstructor(types);
-        IBot? newBot = botConstructor?.Invoke([botConfiguration]) as IBot;
-        if (newBot is not null)
-        {
-          botList.Add(newBot);
-        }
-      }
-    }
-
-    return botList;
+    return BotLoader.LoadBots();
   }
 
   private static async Task<IEnumerable<BotConfiguration>> GetConfigurationsFromFile(string configLocation)

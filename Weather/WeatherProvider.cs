@@ -59,19 +59,20 @@ class WeatherManagerProvider : IWeatherManagerProvider
 
   public IWeatherSource[] GetWeatherSources()
   {
-    var sourceTypes = Assembly.GetExecutingAssembly().GetTypes().Where(type => type.IsAssignableTo(typeof(IWeatherSource)));
+    var sourceTypes = Assembly.GetExecutingAssembly().GetTypes()
+      .Where(type => type.IsAssignableTo(typeof(IWeatherSource)));
     var sourceList = new List<IWeatherSource>();
-        foreach (var type in sourceTypes)
+    foreach (var type in sourceTypes)
     {
       var constructor = type.GetConstructor([]);
       if (constructor is null)
       {
-         continue;
+        continue;
       }
       var source = (IWeatherSource)constructor.Invoke([]);
       sourceList.Add(source);
     }
     return [.. sourceList];
-  } 
+  }
 
 }

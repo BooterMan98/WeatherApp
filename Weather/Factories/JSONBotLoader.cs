@@ -1,6 +1,6 @@
 using System.Reflection;
 using System.Text.Json;
-using WeatherApp.Interfaces;
+using WeatherApp.Helpers;
 using WeatherApp.Sources;
 using WeatherApp.Weather.Bots;
 using WeatherApp.Weather.Models;
@@ -15,6 +15,21 @@ class JSONBotLoader : BotLoader
       PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
+  public override Result<Bot> LoadBot(BotConfiguration configuration)
+  {
+    if (!configuration.Enabled) return Result.Fail<Bot>("Bot not enabled in configuration");
+
+    var botClass = Assembly.GetExecutingAssembly().GetType($"WeatherApp.Weather.Bots.{configuration.Name}");
+
+    if (botClass?.BaseType != typeof(Bot)) return Result.Fail<Bot>($"{configuration.Name} is not a Bot.");
+    
+    Type[] types = [typeof(BotConfiguration)];
+    var botConstructor = botClass.GetConstructor(types);
+    Bot newBot = botConstructor?.Invoke([configuration]) as Bot ?? throw new NullReferenceException(message: $"Could not instantiate {configuration.Name}");
+    
+    return Result.Ok(newBot);
+  }
+
   protected override List<Bot> LoadBotsInternal()
   {
     IEnumerable<BotConfiguration> botConfigurations = GetConfigurations().GetAwaiter().GetResult();
@@ -22,20 +37,10 @@ class JSONBotLoader : BotLoader
     List<Bot> botList = [];
     foreach (var botConfiguration in botConfigurations)
     {
-      if (!botConfiguration.Enabled)
+      var bot = LoadBot(botConfiguration);
+      if (bot.IsSuccess)
       {
-        continue;
-      }
-      var botClass = Assembly.GetExecutingAssembly().GetType($"WeatherApp.Weather.Bots.{botConfiguration.Name}");
-      if (botClass?.BaseType == typeof(Bot))
-      {
-        Type[] types = [typeof(BotConfiguration)];
-        var botConstructor = botClass.GetConstructor(types);
-        Bot? newBot = botConstructor?.Invoke([botConfiguration]) as Bot;
-        if (newBot is not null)
-        {
-          botList.Add(newBot);
-        }
+        botList.Add(bot.Value);
       }
     }
 

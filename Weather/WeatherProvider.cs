@@ -13,14 +13,22 @@ class WeatherManagerProvider : IWeatherManagerProvider
   private readonly BotLoader BotLoader = new JSONBotLoader();
   private readonly WeatherReaderFactory WeatherSourceFactory = new WeatherReflectionReaderFactory();
 
-  public async Task<List<IBot>> CreateBotsAsync(string configLocation)
+// was planing to use async functionality but never came to fruition.
+// maybe will work on that later.
+  public async Task<List<IBot>> CreateBotsAsync()
   {
     return BotLoader.LoadBots();
   }
 
-  public WeatherManager CreateWeatherManager(IWeatherSource[] possibleInputSources)
+  public WeatherManager CreateWeatherManager()
   {
-    return new WeatherManager(possibleInputSources);
+    var manager = new WeatherManager(inputSources: GetWeatherSources());
+
+    foreach (IBot bot in CreateBotsAsync().GetAwaiter().GetResult())
+    {
+      manager.Subscribe(bot);
+    }
+    return manager;
   }
 
   public IWeatherSource[] GetWeatherSources()

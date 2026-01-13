@@ -23,6 +23,9 @@ class WeatherManager(IWeatherSource[] inputSources) : IWeatherReport {
       {
         ReceiveMeasurement(result.Value);
         break;
+      } else
+      {
+        Console.WriteLine(result.Error);
       }
     }
   }

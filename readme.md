@@ -13,17 +13,16 @@ This is what I intend to implement, not necessarily final. Things may have escap
 - class XMLWeatherReader: IWeatherSource // Read Weather from XML
 - class JSONWeatherReader: IWeatherSource // Read Weather from JSON
 
-- class WeatherBot: IWeatherBot
+- class WeatherManager: IWeatherReport
 
-- abstract class WeatherManager: IWeatherReport
-  - botLoader: BotLoader
-  
+- abstract class WeatherReaderFactory: IWeatherSourceFactory
 
-- class StandardWeatherManager: WeatherManager
+- class WeatherReflectionReaderFactory: WeatherReaderFactory
 
-- class ConsoleController: IWeatherBotOutput
+- abstract class Bot: IBot
 
-- abstract class BotLoader // bot factory
+
+- abstract class BotLoader: IBotLoader
 
 - class JSONBotLoader: BotLoader
 
@@ -35,7 +34,7 @@ This is what I intend to implement, not necessarily final. Things may have escap
 
 ### Interfaces
 
-- IWeatherBot: IWeatherListener // Define Bot operations
+- IBot: IWeatherListener // Define Bot operations
   - analyze()
 
 - IWeatherReport: // Interface to manage weather reports. Possibly a singleton, a publisher
@@ -51,6 +50,11 @@ This is what I intend to implement, not necessarily final. Things may have escap
   - read() -> WeatherMeasurement
   - read(string str) -> WeatherMeasurement
 
+- IBotLoader:
+  - LoadBots() -> IBot[]
+
+- IWeatherSourceFactory:
+  - CreateWeatherSources() -> IWeatherSource[]
 
 - IWeatherBotOutput: // Interface between bots and output (Say print to console or to file for example)
   - print()

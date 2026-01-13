@@ -27,7 +27,7 @@ class JSONWeatherSource : IWeatherSource
       var NotValidatedMeasurement = JsonSerializer.Deserialize<WeatherMeasurementsModel>(data);
       var measurement = WeatherMeasurementMapper.ToDomain(NotValidatedMeasurement);
       return Result.Ok(measurement);
-    } catch (Exception e)
+    } catch (JsonException e)
     {
       return Result.Fail<WeatherMeasurement>(e.Message);
     }

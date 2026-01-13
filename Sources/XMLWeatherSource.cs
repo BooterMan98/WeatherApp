@@ -29,9 +29,10 @@ class XMLWeatherSource : IWeatherSource
 
       measurement = WeatherMeasurementMapper.ToDomain(NotValidatedMeasurement);
       }
-    } catch ( Exception e)
+    } catch ( InvalidOperationException e)
     {
-      return Result.Fail<WeatherMeasurement>(e.Message);
+      
+      return Result.Fail<WeatherMeasurement>(e.InnerException?.Message ?? e.Message);
     }
     return Result.Ok(measurement);
   }

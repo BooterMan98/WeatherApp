@@ -1,6 +1,7 @@
 using System;
 
 namespace WeatherApp.Helpers;
+#pragma warning disable CS8604 // Possible null reference argument.
 
 public class Result
 {
@@ -73,3 +74,4 @@ public class Result<T> : Result
   }
 }
 
+#pragma warning restore CS8604 // Possible null reference argument.

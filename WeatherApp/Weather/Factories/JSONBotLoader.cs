@@ -9,7 +9,8 @@ namespace WeatherApp.Weather.Factories;
 
 class JSONBotLoader : BotLoader
 {
-  public string ConfigurationFileLocation { get; init; } = "config.json";
+  public string ConfigurationFileLocation { get; init; } = 
+  $"{AppContext.BaseDirectory}/config.json";
   private readonly JsonSerializerOptions JSONOptions = new()
     {
       PropertyNamingPolicy = JsonNamingPolicy.CamelCase

@@ -28,14 +28,14 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
+    - name: Check Directory
+      run: ls
+
     - name: Install dependencies
       run: dotnet restore
       
     - name: Build
       run: dotnet build --configuration Release --no-restore
-    
-    - name: Check Directory
-      run: ls
 
     - name: Test
       run: dotnet test --no-restore --verbosity normal

@@ -28,8 +28,10 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Check Directory
-      run: ls
+    - name: Print folder tree
+      uses: jaywcjlove/github-action-folder-tree@v1.2.0
+      with:
+        depth: 2
 
     - name: Install dependencies
       run: dotnet restore

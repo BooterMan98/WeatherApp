@@ -47,7 +47,7 @@ jobs:
   
   publish-tests-results:
     needs: build-and-test
-    runs-on: ubuntu-latests
+    runs-on: ubuntu-latest
     permissions:
       checks: write
     if: (!cancelled())

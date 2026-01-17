@@ -35,4 +35,31 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test --no-restore --report-xunit-trx --verbosity normal
+
+    - name: Upload Test Results
+      if: (!cancelled())
+      uses: actions/upload-artifact@v4
+      with:
+        name: Test Results (OS ${{ matrix.os }})
+        path: /**/*.trx
+
+  
+  publish-tests-results:
+    needs: build-and-test
+    runs-on: ubuntu-latests
+    permissions:
+      checks: write
+    if: (!cancelled())
+
+    steps:
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v7.0.0
+      with:
+        path: artifacts
+
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      with:
+        files: "artifacts/**/*.trx"
+

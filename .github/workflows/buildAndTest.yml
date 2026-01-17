@@ -42,7 +42,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Test Results (OS ${{ matrix.os }})
-        path: /**/*.trx
+        path: WeatherAppTests/**/*.trx
 
   
   publish-tests-results:

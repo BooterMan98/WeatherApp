@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace WeatherApp.Weather.Types;
 
 /// <summary>
@@ -6,17 +8,19 @@ namespace WeatherApp.Weather.Types;
 /// <exception cref="ArgumentOutOfRangeException">
 /// The value must be between 0.0 and 100.0 inclusive
 /// </exception>
-struct Humidity
+readonly struct Humidity(decimal value)
 {
+
+  [Range(0, 100)]
   public required decimal Value { 
     get;
-    set
+    init
     {
       field = (value >= 0 && value <= 100)
         ? value
         : throw new ArgumentOutOfRangeException(nameof(value), "The value must be between 0.0 and 100.0 inclusive");
     } 
-    }
+    } = value;
 
   public override readonly string ToString() => $"{Value}%";
 

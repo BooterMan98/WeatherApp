@@ -3,9 +3,9 @@ namespace WeatherApp.Weather.Types;
 /// <summary>
 /// A location in which a measurement is made.
 /// </summary>
-struct Location
+readonly struct Location(string value)
 {
-  public required string Value { get; set; }
+  public required string Value { get; init; } = value;
 
   
   public override readonly string ToString() => Value.ToString();

@@ -11,4 +11,6 @@ readonly struct Temperature(decimal value)
   public static implicit operator decimal(Temperature temperature) => temperature.Value;
 
   public static implicit operator Temperature(decimal dec) => new() { Value = dec };
+
+  public static implicit operator Temperature(int number) => new() { Value = number };
 }

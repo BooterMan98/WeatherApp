@@ -1,5 +1,8 @@
-﻿using WeatherApp.Weather;
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
+using WeatherApp.Weather;
 
+[assembly: InternalsVisibleTo("WeatherAppTests")]
 // {"Location": "City Name","Temperature": 23.0,"Humidity": 85.0}
 
 /* 

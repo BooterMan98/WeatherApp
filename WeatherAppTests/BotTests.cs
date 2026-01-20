@@ -100,4 +100,50 @@ public class BotTests
         }
         // dispose
     }
+    [Theory]
+    [InlineData(0)]
+    [InlineData(20)]
+    [InlineData(40)]
+    [InlineData(60)]
+    [InlineData(80)]
+    [InlineData(100)]
+        internal void SnowBotShouldPrintAMessageToConsoleWhenTemperatureThresholdAchieved(Temperature threshold)
+    {
+        // arrange
+        var fixture = new Fixture();
+
+        fixture.Customize<BotConfiguration>(c => c
+            .Without(c => c.HumidityThreshold)
+            .With(c => c.TemperatureThreshold, threshold)
+        );
+
+        fixture.Customize<WeatherMeasurement>(c => c
+        .With(w => w.Temperature,
+            (Temperature temperature) => (temperature > threshold) ? threshold : temperature)
+        );
+
+        var measurement = fixture.Create<WeatherMeasurement>();
+        var botConfiguration = fixture.Create<BotConfiguration>();
+
+        var message = botConfiguration.Message;
+
+        using (StringWriter sw = new ())
+        {
+
+            var output = Console.Out;
+            Console.SetOut(sw);
+
+            // act
+            var bot = new SnowBot(botConfiguration);
+            bot.Update(measurement);
+
+            Console.SetOut(output);
+
+            Assert.Equal(message, sw.ToString().Trim());
+            
+        }
+        // dispose
+    }
+
+
 }
